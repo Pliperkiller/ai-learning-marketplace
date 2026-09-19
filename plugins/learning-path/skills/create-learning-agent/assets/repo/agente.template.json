@@ -1,0 +1,23 @@
+{
+  "skill": "create-learning-agent",
+  "version": "{{VERSION}}",
+  "generado_en": "{{FECHA}}",
+  "actualizado_en": null,
+  "placeholders": {
+    "TEMA": "{{TEMA}}",
+    "SLUG": "{{SLUG}}",
+    "HERRAMIENTAS_EVAL": "{{HERRAMIENTAS_EVAL}}",
+    "EJEMPLO_TEST": "{{EJEMPLO_TEST}}",
+    "LABS_EJEMPLOS": "{{LABS_EJEMPLOS}}",
+    "REQUISITOS_EXTRA": "{{REQUISITOS_EXTRA}}",
+    "STACK_GITIGNORE": "{{STACK_GITIGNORE}}"
+  },
+  "personalizaciones": [],
+  "upgrades": [],
+  "_reglas": [
+    "Manifest del motor del tutor. Lo crea la skill al generar el repo; /config añade entradas a 'personalizaciones'; /upgrade-agent actualiza 'version' y 'actualizado_en' y añade entradas a 'upgrades'. Ningún otro command ni el estudiante lo edita",
+    "placeholders: valores con los que se instanciaron CLAUDE.md, README.md, .gitignore y labs/README.md. /upgrade-agent los reutiliza para regenerar esos archivos con la versión nueva de la skill (N_FASES y N_TOPICOS no se guardan: se recalculan de roadmap/roadmap.yaml)",
+    "personalizaciones: [{fecha, descripcion, archivos, detalle}] — 'detalle' describe el cambio con precisión suficiente para volver a aplicarlo sobre una versión nueva del archivo",
+    "upgrades: [{fecha, de, a, plan}] — 'plan' es la ruta del archivo en docs/upgrades/ que documenta ese upgrade"
+  ]
+}

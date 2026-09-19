@@ -1,0 +1,22 @@
+{
+  "name": "pliperkiller-learning",
+  "owner": {
+    "name": "pliperkiller",
+    "url": "https://github.com/pliperkiller"
+  },
+  "description": "Skills de Claude Code para aprender cualquier tema con un tutor de IA: del roadmap investigado al repo-tutor que te acompaña sesión a sesión.",
+  "plugins": [
+    {
+      "name": "learning-path",
+      "source": "./plugins/learning-path",
+      "displayName": "Learning Path",
+      "description": "Flujo de dos pasos para aprendizaje asistido por IA: genera un roadmap de estudio investigado y lo convierte en un repo-tutor para Claude Code con sesiones, ejercicios, progreso versionado y vault de Obsidian.",
+      "author": { "name": "pliperkiller" },
+      "homepage": "https://github.com/pliperkiller/ai-learning-marketplace",
+      "repository": "https://github.com/pliperkiller/ai-learning-marketplace",
+      "license": "MIT",
+      "keywords": ["learning", "roadmap", "tutor", "education", "study-plan", "spaced-repetition"],
+      "category": "productivity"
+    }
+  ]
+}

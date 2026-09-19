@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "setup": {
+    "estado": "pendiente",
+    "remote": null,
+    "completado_en": null
+  },
+  "diagnostico": {
+    "estado": "pendiente",
+    "completado_en": null,
+    "nivel_global": null,
+    "niveles_por_fase": {},
+    "notas": []
+  },
+  "posicion_actual": null,
+  "pendiente": null,
+  "fortalezas": [],
+  "debilidades": [],
+  "topicos": {},
+  "sesiones_completadas": 0,
+  "ultima_sesion": null,
+  "_reglas": [
+    "Todo topico ausente de 'topicos' esta en status no_visto",
+    "Estados validos: visto, aprendido, dominado",
+    "Niveles validos: nulo, bajo, medio, alto, experto. Los asigna el tutor en /diagnostico a partir de preguntas puntuales y ejercicios, nunca por autoevaluacion del estudiante",
+    "Cada entrada de 'topicos' lleva status y nivel; ejemplo: \"f1.git-basico\": {\"status\": \"visto\", \"nivel\": \"medio\"}",
+    "Solo el tutor escribe este archivo, en /end-sesion y en los cierres de /diagnostico y /repaso (ver CLAUDE.md)",
+    "setup.estado lo escribe /setup tras el primer push exitoso; sin 'completado' no operan /start-sesion ni /diagnostico",
+    "pendiente: null, o {topic_id, ejercicio, paso, siguiente} cuando /end-sesion deja un ejercicio a medias; /start-sesion lo retoma y lo limpia el siguiente /end-sesion"
+  ]
+}
