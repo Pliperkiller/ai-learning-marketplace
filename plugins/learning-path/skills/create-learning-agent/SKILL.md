@@ -1,17 +1,13 @@
 ---
 name: create-learning-agent
-description: Convierte un roadmap de estudio (.md) ya presente en la sesión en un repo-tutor completo en .zip para Claude Code, con CLAUDE.md pedagógico ("aquí se programa", explicación exhaustiva que asume cero conocimiento), roadmap.yaml, progreso versionado con git, vault de Obsidian (notas por tópico y por sesión, grafo por estado), ejercicios con paso a paso y código en inglés, lecciones por tópico, gate de entrada por fase (retos cortos verificados que deciden si cada tópico se salta, va exprés o se enseña completo), y slash commands (/setup, /diagnostico por preguntas puntuales, /start-sesion, /end-sesion, /repaso, /estado, /fase, /config y /upgrade-agent, que actualiza un repo-tutor ya generado a la versión nueva de esta skill sin tocar roadmap, progreso ni notas). Úsala SIEMPRE que el usuario invoque /learning-path:create-learning-agent (o /create-learning-agent), pida "crea el agente/tutor basado en el roadmap", "genera el repo del tutor" o "conviérteme este roadmap en un tutor" con un roadmap generado por generate-study-roadmap o presente en la conversación, y cuando pregunte cómo actualizar un repo-tutor. Es el paso 2 del flujo iniciado por generate-study-roadmap.
+description: 'Convierte un roadmap de estudio (.md) presente en la sesión en un repo-tutor completo en .zip para Claude Code: CLAUDE.md pedagógico, roadmap.yaml, progreso versionado con git, vault de Obsidian, ejercicios con tests, lecciones por tópico, gate de entrada por fase y nueve slash commands (setup, diagnóstico, sesiones, repaso, estado, config y upgrade). Úsala cuando el usuario invoque /learning-path:create-learning-agent, pida convertir un roadmap en un tutor o agente de estudio, o pregunte cómo actualizar un repo-tutor ya generado. Es el paso 2 del flujo que inicia generate-study-roadmap.'
 metadata:
-  version: "3.1"
+  version: "3.2"
 ---
 
 # Create Learning Agent
 
 Toma un roadmap `.md` y produce `tutor-<slug>.zip`: un repo que se autoconfigura con `/setup` donde Claude Code actúa como tutor personal, con sesiones de ~30 minutos en las que **siempre se produce** (código o entregables verificables), estado que el propio tutor versiona con git, repetición espaciada, y un command `/upgrade-agent` con el que el repo se actualiza cuando esta skill cambia.
-
-## Requisito de modelo
-
-Esta skill está diseñada para el modelo más potente disponible (derivar un currículo estructurado y coherente es la parte difícil). Si estás corriendo en un modelo ligero (familia Haiku o equivalente), advierte al usuario ANTES de empezar y recomiéndale repetir con el modelo más capaz; continúa solo si lo confirma.
 
 ## Paso 0 — Localizar el roadmap
 
@@ -81,7 +77,7 @@ Comprueba `state/progress.json` (bloque `setup` en `pendiente`, clave `pendiente
 cd <directorio padre> && zip -rq /mnt/user-data/outputs/tutor-<slug>.zip tutor-<slug>
 ```
 
-Presenta el zip con `present_files` y cierra breve: qué contiene (3-5 líneas, destacando cómo quedó adaptada la regla de producción al dominio) + el bloque de arranque:
+Presenta el zip con `present_files` y cierra breve: qué contiene (destacando cómo quedó adaptada la regla de producción al dominio) + el bloque de arranque:
 
 ```bash
 unzip tutor-<slug>.zip && cd tutor-<slug>
@@ -108,14 +104,9 @@ La versión vive en `metadata.version` del frontmatter. **Cada cambio a `assets/
 
 ## Errores a evitar
 
-- Regenerar "de memoria" los archivos que `assets/repo/` trae listos.
-- Tópicos sin `criterio_dominio` o con criterios no verificables.
-- Empaquetar sin correr la validación del Paso 3.
+Los errores de forma (placeholders sin sustituir, criterios de dominio ausentes, notas semilla mal nombradas o con links irresolubles, versión del manifest) los detecta `validate_repo.py` en el Paso 3. Lo que el validador no puede ver:
+
 - Inventar contenido: si una sección del roadmap no da para derivar tópicos, pregunta al usuario en lugar de rellenar.
-- Dejar placeholders `{{...}}` sin sustituir en los archivos finales — incluido `state/agente.json`.
-- Generar código (plantillas, esqueletos, tests) con identificadores, docstrings o comentarios en español: el código va en inglés; en español van los enunciados y la conversación.
-- Notas semilla con links inventados: solo el anterior secuencial + `prerequisitos:` del yaml.
-- Nombrar las notas de tópico con el `topic_id` en vez del nombre legible (el grafo mostraría `f1.slug` como etiqueta).
 - Debilitar el diagnóstico al adaptar el CLAUDE.md: reintroducir autoevaluación ("¿sabes alto/medio/bajo?"), quitar la tabla de niveles o permitir `alto`/`experto` sin ejercicio verificado.
 - Debilitar el gate de fase: dejar que un "esto ya lo sé" salte el reto, poner lección antes del reto, o eximir del capstone (o rebajar un `criterio_dominio`) a un tópico con ruta `saltar`. El gate decide enseñanza, nunca maestría.
 - Recortar o "resumir" la regla de explicación exhaustiva al adaptar el CLAUDE.md al dominio: el tutor generado debe explicar siempre como si el estudiante no supiera nada.

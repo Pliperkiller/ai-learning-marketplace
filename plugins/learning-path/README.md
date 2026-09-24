@@ -37,7 +37,7 @@ Dispara con `/learning-path:create-learning-agent` teniendo el roadmap en la ses
 
 ## Requisito de modelo
 
-Ambas skills están diseñadas para el modelo más potente disponible. Con un modelo ligero avisan antes de empezar y recomiendan repetir con uno más capaz.
+Ambas skills están diseñadas para el modelo más potente disponible: investigar un campo y diseñar un currículo coherente son la parte difícil, y con un modelo ligero la calidad cae. Elige el modelo antes de invocarlas.
 
 ## Versiones
 

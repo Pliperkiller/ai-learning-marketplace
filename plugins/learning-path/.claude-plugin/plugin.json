@@ -2,7 +2,7 @@
   "name": "learning-path",
   "displayName": "Learning Path",
   "description": "Genera un roadmap de estudio investigado para cualquier tema y lo convierte en un repo-tutor de Claude Code: sesiones de ~30 min, ejercicios con tests, progreso versionado en git y notas en Obsidian.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": { "name": "pliperkiller" },
   "homepage": "https://github.com/pliperkiller/ai-learning-marketplace",
   "license": "MIT",

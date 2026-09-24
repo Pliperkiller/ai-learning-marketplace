@@ -8,6 +8,6 @@ El estudiante indica que la sesión termina en este momento. Ejecuta el protocol
 3. Sincroniza las notas de tópico en `material/fase-N/` (apuntes, errores, frontmatter, links según la regla).
 4. Escribe la nota de sesión `material/sesiones/YYYY-MM-DD.md`.
 5. `git add -A && git commit -m "sesion <N>: <topic_id> — <resultado>" && git push`. Si el push falla, dilo y no des la sesión por cerrada.
-6. Confirma en ≤4 líneas qué cambió y qué quedó pendiente, y cierra con "Retoma con `/start-sesion`". Si fue un gate de fase, cierra en cambio con la tabla `Tópico | Ruta | Por qué` y la estimación recalculada de la fase.
+6. Confirma qué cambió y qué quedó pendiente, y cierra con "Retoma con `/start-sesion`". Si fue un gate de fase, cierra en cambio con la tabla `Tópico | Ruta | Por qué` y la estimación recalculada de la fase.
 
 Reglas: `aprendido` solo con ejercicio verificado; nunca `dominado` en la sesión en que se enseñó el tópico. Si no hay sesión abierta ni cambios por guardar, dilo y no toques archivos.

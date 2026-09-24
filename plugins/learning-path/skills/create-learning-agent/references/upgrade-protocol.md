@@ -60,7 +60,7 @@ Los commands propios del estudiante no se tocan (zona estudiante). Si uno de ell
 - **Estructura**: directorios y `.gitkeep` que falten (`docs/upgrades/`, `ejercicios/diagnostico/`, `labs/`), plantillas que no existían en la versión actual.
 
 ### 3.6 Escribir el plan
-Instancia `docs/upgrades/_plantilla.md` (o `assets/repo/plantilla-plan-upgrade.md` de la skill si el repo aún no la tiene) en `docs/upgrades/YYYY-MM-DD-v<actual>-a-v<nueva>.md`, con todas las secciones llenas: nada de "varios archivos" — cada archivo con su acción y su motivo, cada personalización con su decisión, cada clave que se añade con su valor. La sección "Lo que NO se toca" se escribe completa aunque parezca repetitiva: es lo que el estudiante mira primero. En el chat: resumen de ≤10 líneas (versiones, cuántos archivos por acción, personalizaciones y supuestos a confirmar) + la ruta del plan + "responde `aprobado` o dime qué cambiar". Si el entorno impide escribir (plan mode), el plan se presenta por el mecanismo de plan y el archivo se escribe al empezar la fase 2.
+Instancia `docs/upgrades/_plantilla.md` (o `assets/repo/plantilla-plan-upgrade.md` de la skill si el repo aún no la tiene) en `docs/upgrades/YYYY-MM-DD-v<actual>-a-v<nueva>.md`, con todas las secciones llenas: nada de "varios archivos" — cada archivo con su acción y su motivo, cada personalización con su decisión, cada clave que se añade con su valor. La sección "Lo que NO se toca" se escribe completa aunque parezca repetitiva: es lo que el estudiante mira primero. En el chat: resumen (versiones, cuántos archivos por acción, personalizaciones y supuestos a confirmar) + la ruta del plan + "responde `aprobado` o dime qué cambiar". Si el entorno impide escribir (plan mode), el plan se presenta por el mecanismo de plan y el archivo se escribe al empezar la fase 2.
 
 ## 4. Aplicación (solo tras `aprobado`)
 
@@ -73,7 +73,7 @@ Orden fijo; cada paso deja el repo en un estado que el siguiente puede verificar
 6. **Validación**: `python3 <skill>/scripts/validate_repo.py . --diff-base HEAD`. El script comprueba el schema completo del repo en la versión nueva (commands, manifest, `progress.json`, yaml, semillas, placeholders) y que la zona del estudiante no cambió respecto a `HEAD`: cero modificaciones o borrados en sus archivos, y en `progress.json` y en las notas solo adiciones. Si falla, corrige y repite; si no puedes dejarlo en verde, `git checkout -- . && git clean -fd` para volver a `HEAD`, deja el plan con estado `fallido` y el motivo, y díselo al estudiante. Nunca commitees en rojo.
 7. **Resultado**: en el archivo del plan, estado `aplicado` y la sección "Resultado" con fecha, salida resumida de la validación, e incidencias.
 8. **Git**: `git add -A && git commit -m "upgrade: agente v<actual> → v<nueva>"`, `git tag agente-v<nueva>` (si el tag existe, no lo muevas: dilo), `git push && git push --tags`. Si el push falla, muéstralo y no des el upgrade por cerrado.
-9. Borra el directorio temporal de la skill. Cierra en ≤5 líneas: versión nueva, commands nuevos o eliminados, qué debe hacer distinto el estudiante en su próxima sesión, y cómo revertir (`git revert <commit>`).
+9. Borra el directorio temporal de la skill. Cierra con: versión nueva, commands nuevos o eliminados, qué debe hacer distinto el estudiante en su próxima sesión, y cómo revertir (`git revert <commit>`).
 
 ## 5. Casos borde
 

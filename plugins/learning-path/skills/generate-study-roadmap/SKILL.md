@@ -1,15 +1,11 @@
 ---
 name: generate-study-roadmap
-description: 'Genera un roadmap de estudio estándar en .md para cualquier tema que el usuario quiera aprender, investigando en la web (demanda del perfil, consenso de skills, certificaciones, tendencias) y estructurándolo en fases con criterios de dominio verificables y capstone evolutivo. Úsala SIEMPRE que el usuario invoque /learning-path:generate-study-roadmap (o /generate-study-roadmap), pida "un roadmap para aprender X", "plan/ruta de estudio de X", "learning path", o diga "quiero aprender X" con intención de estructurar el aprendizaje completo de un tema — aunque no use la palabra roadmap. Es el paso 1 de un flujo de dos partes cuyo paso 2 es la skill create-learning-agent, que convierte el roadmap en un repo-tutor. Diseñada para ejecutarse con el modelo más potente disponible.'
+description: 'Genera un roadmap de estudio estándar en .md para cualquier tema que el usuario quiera aprender, investigando en la web (demanda del perfil, consenso de skills, certificaciones, tendencias) y estructurándolo en fases con criterios de dominio verificables y capstone evolutivo. Úsala SIEMPRE que el usuario invoque /learning-path:generate-study-roadmap (o /generate-study-roadmap), pida "un roadmap para aprender X", "plan/ruta de estudio de X", "learning path", o diga "quiero aprender X" con intención de estructurar el aprendizaje completo de un tema — aunque no use la palabra roadmap. Es el paso 1 de un flujo de dos partes cuyo paso 2 es la skill create-learning-agent, que convierte el roadmap en un repo-tutor.'
 ---
 
 # Generate Study Roadmap
 
 Produce un roadmap de estudio en `.md`, listo para refinarse en conversación y para alimentar la skill `create-learning-agent` (que lo convierte en un repo-tutor para Claude Code). El estándar de calidad: un documento investigado, secuencial, con criterios de dominio que se puedan demostrar — no un inventario de herramientas.
-
-## Requisito de modelo
-
-Esta skill está diseñada para el modelo más potente disponible (investigación + diseño curricular exigen profundidad). Si estás corriendo en un modelo ligero (familia Haiku o equivalente), advierte al usuario ANTES de empezar que la calidad será menor y recomiéndale repetir la invocación con el modelo más capaz; continúa solo si lo confirma.
 
 ## Paso 0 — Entender el encargo
 
@@ -46,7 +42,7 @@ El criterio de dominio es la pieza más importante: debe poder demostrarse con c
 
 ## Paso 4 — Cerrar en el chat
 
-Resumen breve (2-4 frases) de la lógica del roadmap; si investigaste demanda, el hallazgo clave con sus citas; e invita a refinar fases, alcance o herramientas en la conversación antes de generar el agente con `/learning-path:create-learning-agent`.
+Resumen breve de la lógica del roadmap; si investigaste demanda, el hallazgo clave con sus citas; e invita a refinar fases, alcance o herramientas en la conversación antes de generar el agente con `/learning-path:create-learning-agent`.
 
 ## Errores a evitar
 

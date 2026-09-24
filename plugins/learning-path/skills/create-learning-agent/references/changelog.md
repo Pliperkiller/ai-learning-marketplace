@@ -8,6 +8,22 @@ Cada versión trae tres bloques: **Cambios** (qué gana el repo generado), **Hue
 
 ---
 
+## 3.2 — 2026-09-24
+
+**Cambios**
+- Se eliminan los topes numéricos de líneas de los cierres en el chat (`recap de ≤8 líneas`, `Confirma en ≤4 líneas`, `resumen de ≤10 líneas`, `más de ~15 líneas`). Eran relojes de verbosidad calibrados contra modelos que se iban por las ramas; el modelo actual ajusta la longitud al contenido, y el número la estrangulaba cuando el caso pedía más. La intención se conserva como marco de audiencia ("recap breve", "el chat es donde el estudiante trabaja, no donde tú expones"), no como cifra.
+- `CLAUDE.md` baja el registro en dos reglas donde el énfasis no añadía información sobre lo ya dicho (`sin excepciones`, `Esto no es opcional`), conservando el alcance real de la regla ("en todas las fases por igual"). Con el énfasis como registro por defecto los marcadores dejan de informar.
+- Sin cambios de comportamiento: ninguna regla del tutor, criterio de dominio, protocolo ni invariante se toca. Es una limpieza de prompt salida de una auditoría de patrones fechados.
+
+**Huellas**: `CLAUDE.md` dice «recap breve» y no «recap de ≤8 líneas»; no queda ningún `≤N líneas` en el archivo.
+
+**Migración desde 3.1**
+- `reemplazar` `CLAUDE.md`, `.claude/commands/end-sesion.md`, `config.md`, `upgrade-agent.md`.
+- `state/progress.json`: sin cambios de schema (sigue en v3) y sin tocar ningún dato.
+- No hay nada que migrar en la zona del estudiante: el cambio es de redacción del motor.
+
+---
+
 ## 3.1 — 2026-09-24
 
 **Cambios**

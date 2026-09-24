@@ -7,7 +7,7 @@ Ajustes soportados: crear o modificar slash commands (`.claude/commands/`), agre
 
 Protocolo:
 1. `git pull --ff-only` antes de tocar nada.
-2. Reformula el cambio en 2-3 líneas: qué se va a hacer y qué archivos toca. Confirma con el estudiante ANTES de editar.
+2. Reformula el cambio brevemente: qué se va a hacer y qué archivos toca. Confirma con el estudiante ANTES de editar.
 3. Aplica el cambio respetando estos guardarraíles:
    - Desde aquí NUNCA se edita `state/progress.json` (salvo que un cambio de roadmap agregue campos nuevos que el propio schema exija), ni las soluciones del estudiante en `ejercicios/`.
    - En `roadmap.yaml`: no cambies ids existentes (el progreso los referencia); lo nuevo sigue el schema del archivo (ids `f<n>.<slug>` únicos, `tipo` válido, `criterio_dominio` verificable, `horas` y actualizar `meta.horas_totales_estimadas`).
