@@ -34,6 +34,8 @@ except ImportError:  # pragma: no cover
 COMMANDS = ["setup", "start-sesion", "end-sesion", "diagnostico", "repaso",
             "estado", "fase", "config", "upgrade-agent"]
 TIPOS = {"codigo", "mixto", "conceptual"}
+GATE_ESTADOS = {"en_curso", "completado"}
+RUTAS = {"saltar", "expres", "completo"}
 PLACEHOLDER_KEYS = ["TEMA", "SLUG", "HERRAMIENTAS_EVAL", "EJEMPLO_TEST",
                     "LABS_EJEMPLOS", "REQUISITOS_EXTRA", "STACK_GITIGNORE"]
 REQUIRED_FILES = [
@@ -105,6 +107,34 @@ def check_files(repo):
             err(f".claude/commands/{stale}.md no existe desde 2.2: debe eliminarse")
 
 
+def check_gates(data):
+    """gates_fase: one entry per phase that already went through its entry gate."""
+    gates = data.get("gates_fase")
+    if gates is None:
+        return
+    if not isinstance(gates, dict):
+        err("progress.json: gates_fase debe ser un objeto {fase_id: {...}}")
+        return
+    for fase_id, gate in gates.items():
+        if not isinstance(gate, dict):
+            err(f"progress.json: gates_fase.{fase_id} debe ser un objeto")
+            continue
+        estado = gate.get("estado")
+        if estado not in GATE_ESTADOS:
+            err(f"progress.json: gates_fase.{fase_id}.estado inválido {estado!r} "
+                f"(esperado: {' | '.join(sorted(GATE_ESTADOS))})")
+        rutas = gate.get("rutas")
+        if rutas is None:
+            continue
+        if not isinstance(rutas, dict):
+            err(f"progress.json: gates_fase.{fase_id}.rutas debe ser un objeto {{topic_id: ruta}}")
+            continue
+        for tid, ruta in rutas.items():
+            if ruta not in RUTAS:
+                err(f"progress.json: gates_fase.{fase_id}.rutas.{tid} inválida {ruta!r} "
+                    f"(esperado: {' | '.join(sorted(RUTAS))})")
+
+
 def check_progress(repo, fresh):
     p = repo / "state/progress.json"
     if not p.exists():
@@ -114,7 +144,7 @@ def check_progress(repo, fresh):
     except json.JSONDecodeError as e:
         err(f"state/progress.json no parsea: {e}")
         return None
-    for key in ["setup", "diagnostico", "topicos", "posicion_actual", "pendiente",
+    for key in ["setup", "diagnostico", "gates_fase", "topicos", "posicion_actual", "pendiente",
                 "fortalezas", "debilidades", "sesiones_completadas", "ultima_sesion", "_reglas"]:
         if key not in data:
             err(f"progress.json: falta la clave '{key}'")
@@ -125,6 +155,7 @@ def check_progress(repo, fresh):
     for key in ["estado", "nivel_global", "niveles_por_fase"]:
         if key not in diag:
             err(f"progress.json: diagnostico.{key} ausente")
+    check_gates(data)
     if fresh:
         if setup.get("estado") != "pendiente":
             err("--fresh: setup.estado debe ser 'pendiente'")
@@ -132,6 +163,8 @@ def check_progress(repo, fresh):
             err("--fresh: diagnostico.estado debe ser 'pendiente'")
         if data.get("topicos"):
             err("--fresh: topicos debe estar vacío")
+        if data.get("gates_fase"):
+            err("--fresh: gates_fase debe estar vacío")
         if data.get("pendiente") is not None:
             err("--fresh: pendiente debe ser null")
     return data

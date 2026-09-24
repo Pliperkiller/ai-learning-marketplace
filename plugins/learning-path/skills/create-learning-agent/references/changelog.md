@@ -8,6 +8,27 @@ Cada versión trae tres bloques: **Cambios** (qué gana el repo generado), **Hue
 
 ---
 
+## 3.1 — 2026-09-24
+
+**Cambios**
+- Nuevo **gate de entrada de fase**: al entrar a una fase sin registro en `gates_fase`, la sesión se dedica a retar al estudiante tópico a tópico (10-15 min por reto, sin lección previa, tipo según el `tipo` del yaml) y a repartir cada tópico en una ruta — `saltar` (resuelto: pasa a `aprendido`/`alto` con su `next_review`), `expres` (a medias: una sesión, ejercicio primero y lección solo del hueco) o `completo` (flujo normal, donde aplica la personalización de sesiones por tópico de `state/agente.json`). El autorreporte no salta ningún reto, y ni el `criterio_dominio` de un tópico ni el capstone de la fase se relajan por la ruta asignada. Motivo: un estudiante que se subestima en el `/diagnostico` inicial quedaba con todo en `no_visto` y repetía durante semanas material que ya dominaba.
+- `state/progress.json` sube a schema v3 con la clave `gates_fase`: `{fase_id: {estado, fecha, rutas, evidencia}}`, `estado` ∈ `en_curso | completado`, rutas ∈ `saltar | expres | completo`.
+- `/diagnostico` exime del gate la fase donde aterriza: su cierre escribe `gates_fase.<fase de posicion_actual>` con `origen: "diagnostico"`. El gate opera desde la fase siguiente.
+- `/end-sesion` es quien escribe el cierre del gate (el invariante "solo `/end-sesion` escribe `progress.json`" no cambia) y cierra el chat con la tabla `Tópico | Ruta | Por qué`.
+- `/fase` muestra una columna `Ruta` y pondera la estimación por ruta (`saltar` = 0 sesiones, `expres` = 1, `completo` = ritmo real o la personalización registrada); el capstone sigue sumando 2-3 sesiones siempre. Sigue siendo solo lectura.
+- `CLAUDE.md`: sección nueva "Protocolo gate de fase", disparador en la apertura de `/start-sesion`, y dos reglas nuevas en "Lo que NUNCA haces" (no saltar el capstone ni relajar criterios por una ruta; no saltar un reto por autorreporte). `/config` suma el gate a la lista de invariantes que no puede romper. `README.md`: el gate explicado en el flujo de sesión y en las reglas del juego.
+- `scripts/validate_repo.py` exige la clave `gates_fase`, valida estados y rutas, y con `--fresh` la exige vacía.
+
+**Huellas**: `state/progress.json` tiene la clave `gates_fase` y `version: 3` (y `CLAUDE.md` tiene la sección "Protocolo gate de fase"). Desde 3.0 el manifest `state/agente.json` manda: estas huellas son solo respaldo.
+
+**Migración desde 3.0**
+- `state/progress.json`: `añadir clave` `gates_fase: {}`. `version` (→ 3) y `_reglas` se reemplazan por los del asset, como hace siempre §3.5 del protocolo con esos dos campos. **Ningún dato del estudiante se toca**: ni `topicos`, ni niveles, ni `posicion_actual`, ni `pendiente`.
+- `reemplazar` `CLAUDE.md`, `README.md`, `.claude/commands/start-sesion.md`, `end-sesion.md`, `diagnostico.md`, `config.md`, `fase.md`.
+- **Sin gate retroactivo**: el disparador solo mira la fase de `posicion_actual`, así que las fases ya cerradas nunca generan gate. La fase en curso sí recibe su gate en la siguiente `/start-sesion`, y solo reta los tópicos que aún no están en `aprendido` o mejor — que es exactamente el caso que motiva esta versión. Dilo en el plan: la próxima sesión del estudiante será un gate y no una sesión normal.
+- Si el repo ya tenía `diagnostico.estado == "completado"`, NO se escribe la exención retroactiva de la fase de aterrizaje (sería escribir datos, no schema): el gate de la fase en curso corre y la sustituye con evidencia mejor.
+
+---
+
 ## 3.0 — 2026-09-09
 
 **Cambios**

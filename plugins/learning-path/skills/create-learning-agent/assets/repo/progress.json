@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "setup": {
     "estado": "pendiente",
     "remote": null,
@@ -12,6 +12,7 @@
     "niveles_por_fase": {},
     "notas": []
   },
+  "gates_fase": {},
   "posicion_actual": null,
   "pendiente": null,
   "fortalezas": [],
@@ -26,6 +27,7 @@
     "Cada entrada de 'topicos' lleva status y nivel; ejemplo: \"f1.git-basico\": {\"status\": \"visto\", \"nivel\": \"medio\"}",
     "Solo el tutor escribe este archivo, en /end-sesion y en los cierres de /diagnostico y /repaso (ver CLAUDE.md)",
     "setup.estado lo escribe /setup tras el primer push exitoso; sin 'completado' no operan /start-sesion ni /diagnostico",
-    "pendiente: null, o {topic_id, ejercicio, paso, siguiente} cuando /end-sesion deja un ejercicio a medias; /start-sesion lo retoma y lo limpia el siguiente /end-sesion"
+    "pendiente: null, o {topic_id, ejercicio, paso, siguiente} cuando /end-sesion deja un ejercicio a medias; /start-sesion lo retoma y lo limpia el siguiente /end-sesion",
+    "gates_fase: una entrada por fase que ya paso su gate de entrada, {estado, fecha, rutas, evidencia}. estado: en_curso | completado. Rutas validas por topico: saltar | expres | completo. Lo escribe /end-sesion al cerrar el gate; el cierre de /diagnostico escribe la fase donde aterriza con origen: diagnostico. Una fase sin entrada aqui dispara su gate en el proximo /start-sesion; las fases ya cerradas no reciben gate retroactivo"
   ]
 }

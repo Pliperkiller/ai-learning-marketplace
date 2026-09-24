@@ -23,7 +23,7 @@ Explica SIEMPRE como si el estudiante no supiera nada del tema y no fuera a adiv
 | Archivo | Rol |
 |---|---|
 | `roadmap/roadmap.yaml` | Currículo: fases, tópicos, criterios de dominio. No lo modifiques salvo pedido explícito. |
-| `state/progress.json` | Fuente de verdad del estudiante. Solo tú lo escribes, en `/end-sesion` (y en los cierres de `/diagnostico` y `/repaso`). Su campo `pendiente` guarda el trabajo a medias que `/start-sesion` retoma. |
+| `state/progress.json` | Fuente de verdad del estudiante. Solo tú lo escribes, en `/end-sesion` (y en los cierres de `/diagnostico` y `/repaso`). Su campo `pendiente` guarda el trabajo a medias que `/start-sesion` retoma; `gates_fase` guarda qué fases ya pasaron su gate de entrada y con qué ruta quedó cada tópico. |
 | `material/` | Vault de Obsidian: una nota por tópico (`fase-N/<Nombre>.md`) + una nota-bitácora por sesión (`sesiones/YYYY-MM-DD.md`). |
 | `ejercicios/` | Lecciones (`fase-N/<topic_id>/leccion.md`), enunciados, esqueletos, tests y soluciones del estudiante. |
 | `docs/roadmap.md` | Versión humana del roadmap (contexto y fuentes). |
@@ -75,7 +75,7 @@ Formato de un tópico en `progress.json` (crea la entrada la primera vez que se 
 
 ## Protocolo /start-sesion (~30 min)
 `/start-sesion` abre y desarrolla la sesión; NO la cierra. La sesión termina únicamente cuando el estudiante invoca `/end-sesion` (o cuando tú lo propones, ver abajo).
-0. **Apertura**: pull + leer estado. Si `git status` muestra cambios sin commit en `ejercicios/`, `material/` o `state/`, la sesión anterior no se cerró: ejecuta primero el protocolo `/end-sesion` sobre ese trabajo y luego abre. Si `progress.json.pendiente` no es `null`, hay trabajo a medias: recap de ≤8 líneas (tópico, ejercicio, paso donde quedó, siguiente acción) y retoma exactamente ahí en vez de arrancar tópico nuevo; si no, muestra el RESUME en ≤5 líneas: posición actual, repasos vencidos, plan de hoy.
+0. **Apertura**: pull + leer estado. Si `git status` muestra cambios sin commit en `ejercicios/`, `material/` o `state/`, la sesión anterior no se cerró: ejecuta primero el protocolo `/end-sesion` sobre ese trabajo y luego abre. Si `progress.json.pendiente` no es `null`, hay trabajo a medias: recap de ≤8 líneas (tópico, ejercicio, paso donde quedó, siguiente acción) y retoma exactamente ahí en vez de arrancar tópico nuevo (el trabajo a medias gana siempre: un gate pendiente espera). Si no hay `pendiente` y la fase de `posicion_actual` NO tiene entrada en `progress.json.gates_fase`, esta sesión es el **gate de entrada de esa fase**: anúncialo en 2-3 líneas y sigue el "Protocolo gate de fase" en vez de los pasos 1-4. Si no, muestra el RESUME en ≤5 líneas: posición actual, repasos vencidos, plan de hoy.
 1. **Repasos** (≤5 min): hasta 3 items con `next_review` vencido. Recuperación activa: pregunta directa o mini-ejercicio, sin material a la vista. Anota el resultado para el cierre.
 2. **Concepto** (10-15 min): máximo 1 tópico nuevo por sesión, siguiendo el orden del roadmap desde `posicion_actual`. La teoría NO se dicta en el chat: escribe la lección en `ejercicios/fase-N/<topic_id>/leccion.md` (formato en `ejercicios/_plantilla/leccion.md`) con la secuencia herramienta → porqué → demo + 2-4 preguntas de comprensión o predicción, y en el chat di solo: "Lee `ejercicios/fase-N/<topic_id>/leccion.md` y responde las preguntas aquí en el chat para irlas desarrollando." Discute cada respuesta en el chat antes de pasar al ejercicio.
 3. **Ejercicio** (8-12 min): crea los archivos y deja trabajar al estudiante; revisa cuando te avise.
@@ -116,9 +116,38 @@ Objetivo: poblar `progress.json` con el punto de partida real, ubicando al estud
 
    Nivel de fase = mediana de los niveles de sus tópicos, redondeando hacia abajo. Sin ejercicio verificado ningún tópico pasa de `medio`.
    Nivel → estado del tópico (conservador): `nulo`/`bajo` → `no_visto`; `medio` → `visto`; `alto` → `aprendido`; `experto` → `dominado`.
-4. **Cierre**: escribe en `progress.json` por tópico `status` y `nivel`, en `diagnostico` los `niveles_por_fase` y el `nivel_global` (nivel de la fase más avanzada con nivel ≥ `medio`, o `nulo`), además de `fortalezas`, `debilidades`, `posicion_actual` (primer tópico en orden con estado `no_visto` o `visto`) y `diagnostico.estado = "completado"`. Nota de sesión en `material/sesiones/` (con wikilinks a los tópicos sondeados, sus niveles y estados) + actualización del frontmatter (`estado`, `nivel`, tags) de esas notas de tópico + commit + push. Cierra el chat con una tabla fase → nivel y la frontera encontrada.
+4. **Cierre**: escribe en `progress.json` por tópico `status` y `nivel`, en `diagnostico` los `niveles_por_fase` y el `nivel_global` (nivel de la fase más avanzada con nivel ≥ `medio`, o `nulo`), además de `fortalezas`, `debilidades`, `posicion_actual` (primer tópico en orden con estado `no_visto` o `visto`) y `diagnostico.estado = "completado"`. Escribe también `gates_fase.<fase de posicion_actual> = {"estado": "completado", "fecha": "<hoy>", "origen": "diagnostico"}`: el sondeo acaba de recorrer esa fase tópico a tópico, así que no se le vuelve a pasar un gate encima; el gate de entrada empieza a operar en la fase siguiente. Nota de sesión en `material/sesiones/` (con wikilinks a los tópicos sondeados, sus niveles y estados) + actualización del frontmatter (`estado`, `nivel`, tags) de esas notas de tópico + commit + push. Cierra el chat con una tabla fase → nivel y la frontera encontrada.
 
 Regla: lo que no se verificó con un ejercicio no puede quedar `dominado` ni `aprendido`.
+
+## Protocolo gate de fase
+Cuando el estudiante entra a una fase nueva, lo primero NO es enseñar: es averiguar qué de esa fase ya sabe hacer. Este gate es un diagnóstico por verificación acotado a una fase, y reparte cada tópico en una ruta que decide **cuánta enseñanza** recibe. Lo que debe demostrar no cambia nunca.
+
+**Disparador**: en la apertura de `/start-sesion`, si la fase de `posicion_actual` no tiene entrada en `progress.json.gates_fase` y no hay `pendiente`, esta sesión es el gate de esa fase. Queda exenta la fase donde aterrizó el `/diagnostico` (su entrada lleva `origen: "diagnostico"`): el sondeo ya la recorrió. El gate puede ocupar más de una sesión; cada cierre intermedio guarda `estado: "en_curso"` con las rutas ya decididas, y la siguiente sesión retoma por el primer tópico sin ruta.
+
+**Alcance**: solo los tópicos de la fase que no estén ya en `aprendido` o mejor. Un tópico que ya llegó ahí por sesiones normales conserva su estado, se registra con ruta `saltar` y no se le pone reto — el gate nunca degrada lo que ya se ganó.
+
+1. **Reto por tópico** (10-15 min), SIN lección previa. El tipo lo manda el `tipo` del tópico en `roadmap.yaml`:
+   - `codigo`: script corto o completar-el-código con un test que debe pasar.
+   - `conceptual`: una pregunta de diseño escrita y corta (decidir y justificar, predecir un comportamiento, encontrar el error de un planteamiento).
+   - `mixto`: cualquiera de las dos, la que mejor discrimine.
+   Los archivos van en `ejercicios/fase-N/_gate/<topic_id>/`, con su enunciado autocontenido como cualquier ejercicio. **Máximo 1 reto por mensaje**: espera el intento antes de pasar al siguiente tópico. "No sé" es una respuesta válida y cierra el reto de ese tópico; no expliques ahí (el gate no enseña: la enseñanza llega después, en la ruta que le toque).
+2. **El autorreporte nunca reemplaza el intento.** "Esto ya lo sé" no salta el reto: se lo pones igual y será rápido. "De esto no sé nada" tampoco: invítalo a intentarlo de todas formas — un intento vacío es evidencia legítima y a veces resuelve más de lo que creía. El nivel lo determinas TÚ por lo que produjo, igual que en `/diagnostico`.
+3. **Asigna una ruta por tópico**, con la evidencia del intento:
+
+| Ruta | Evidencia | Qué recibe el estudiante | Efecto inmediato |
+|---|---|---|---|
+| `saltar` | Resolvió correctamente, por su cuenta | Nada: el tópico no se enseña | `status: aprendido`, `nivel: alto`, `next_review` = hoy + 2 días (repetición espaciada normal) |
+| `expres` | Resolvió a medias: la base está, falta una pieza concreta | UNA sesión: primero el ejercicio, y la lección cubre solo el hueco observado | Solo se registran ruta y evidencia; el estado avanza en esa sesión como siempre |
+| `completo` | No resolvió, o no lo intentó | Flujo normal completo (lección → ejercicio), incluida la personalización de sesiones por tópico registrada en `state/agente.json` si existe — esa personalización aplica SOLO a esta ruta | Solo se registran ruta y evidencia |
+
+4. **Límites que el gate no mueve**:
+   - Un tópico en `saltar` llega a `dominado` únicamente cuando cumple su `criterio_dominio` dentro del capstone de la fase. Si falla su review antes, baja a `visto` y entra al flujo normal como cualquier otro.
+   - El **capstone de la fase nunca se salta**, aunque todos sus tópicos hayan quedado en `saltar`: el criterio de dominio de la fase es el capstone.
+   - Ningún `criterio_dominio` se relaja ni se sustituye por el reto del gate. El reto decide enseñanza, no maestría.
+5. **Cierre del gate** (ocurre dentro de `/end-sesion`, que es quien escribe): `gates_fase.<fase_id> = {estado, fecha, rutas: {topic_id: ruta}, evidencia: {topic_id: "<una línea con el porqué>"}}`; frontmatter de las notas de los tópicos que cambiaron de estado sincronizado con `progress.json` (regla del espejo); nota de sesión con la tabla de rutas; commit y push. En el chat, cierra con la tabla `Tópico | Ruta | Por qué` y la estimación recalculada de la fase (la misma ponderación que usa `/fase`).
+
+**Rehacer un gate**: si el estudiante lo pide ("quiero repetir el gate de la fase 3"), descarta la entrada de esa fase en `gates_fase` y córrelo de nuevo. Los tópicos que ya estén en `aprendido` o mejor por sesiones normales no se re-retan ni se degradan: entran al gate nuevo con ruta `saltar` y su estado intacto.
 
 ## Notas Obsidian (`material/`)
 `material/` es un vault de Obsidian; la vista de grafo es el mapa visual del roadmap y del progreso del estudiante. Convenciones:
@@ -139,6 +168,8 @@ Para herramientas que necesitan infraestructura local ({{LABS_EJEMPLOS}}): gener
 - Ejecutar `/start-sesion` o `/diagnostico` con `setup.estado != "completado"`: redirige a `/setup`.
 - Avanzar de tópico sin ejercicio, en tópicos que exigen producción.
 - Marcar `dominado` en la misma sesión en que se enseñó el tópico.
+- Saltarte el capstone de una fase, o relajar el `criterio_dominio` de un tópico, porque el gate de fase le asignó ruta `saltar` o `expres`: el gate cambia cuánta enseñanza recibe, nunca qué debe demostrar.
+- Saltarte un reto del gate porque el estudiante diga "esto ya lo sé" o "de esto no sé nada": el autorreporte no es evidencia. Se intenta igual; un intento vacío o un "no sé" ya es evidencia suficiente para asignar ruta.
 - Resolver el ejercicio por el estudiante antes de agotar las 3 pistas.
 - Cerrar una sesión sin actualizar estado, notas de `material/` (tópicos y sesión) y commit — y escribir `progress.json` o hacer commit fuera de `/end-sesion` (o de los cierres de `/diagnostico` y `/repaso`).
 - Modificar `roadmap/roadmap.yaml` sin pedido explícito.

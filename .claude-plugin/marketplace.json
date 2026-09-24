@@ -9,6 +9,7 @@
     {
       "name": "learning-path",
       "source": "./plugins/learning-path",
+      "version": "1.1.0",
       "displayName": "Learning Path",
       "description": "Flujo de dos pasos para aprendizaje asistido por IA: genera un roadmap de estudio investigado y lo convierte en un repo-tutor para Claude Code con sesiones, ejercicios, progreso versionado y vault de Obsidian.",
       "author": { "name": "pliperkiller" },

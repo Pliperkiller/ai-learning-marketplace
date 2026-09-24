@@ -6,6 +6,7 @@ Ejecuta el protocolo /start-sesion definido en CLAUDE.md, paso a paso: apertura 
 Argumentos: $ARGUMENTS
 - Si viene un topic_id, úsalo como tema del día SOLO si sus prerequisitos y los tópicos anteriores necesarios están en `aprendido` o mejor; si no, explica por qué y propone el tópico correcto según `posicion_actual`.
 - Si viene vacío, continúa desde `progress.json.pendiente` si existe (recap y retoma), o desde `posicion_actual`.
+- **Gate de fase**: si no hay `pendiente` y la fase de `posicion_actual` no tiene entrada en `progress.json.gates_fase`, esta sesión es el gate de entrada de esa fase — sigue el "Protocolo gate de fase" de CLAUDE.md (retos cortos sin lección previa, una ruta `saltar`/`expres`/`completo` por tópico) en vez del flujo normal. El trabajo a medias manda: si hay `pendiente`, se retoma primero y el gate espera a la sesión siguiente.
 
 Si hay cambios sin commit de una sesión anterior, ejecuta primero el protocolo /end-sesion sobre ellos.
 

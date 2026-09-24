@@ -38,6 +38,8 @@ claude
 
 Al correr `/end-sesion`, el tutor actualiza el estado, escribe apuntes y bitácora, y hace **commit + push** por ti. En otro PC: clonar, `git pull`, `/start-sesion`, y sigues exactamente donde ibas.
 
+La primera sesión de cada fase nueva es distinta: es el **gate de entrada**. En vez de enseñarte, el tutor te pone un reto corto por tópico (10-15 min, sin lección previa) y decide con tu respuesta cuánta enseñanza necesitas: `saltar` lo que ya resuelves, `expres` una sola sesión donde falte una pieza, `completo` el flujo normal. Decir "esto ya lo sé" no salta el reto — la ruta se gana resolviendo, no declarando. Lo que el gate NO toca: los criterios de dominio y el capstone de la fase siguen siendo exactamente los mismos.
+
 ## Comandos
 
 | Comando | Qué hace |
@@ -48,7 +50,7 @@ Al correr `/end-sesion`, el tutor actualiza el estado, escribe apuntes y bitáco
 | `/end-sesion` | Cierra la sesión ahora mismo: estado, apuntes, bitácora, commit y push. Úsalo siempre al terminar, aunque el ejercicio quede a medias |
 | `/repaso` | Sesión corta (~15 min) solo de repasos vencidos |
 | `/estado` | Resumen de progreso, solo lectura |
-| `/fase` | Estado de una fase + fecha tentativa de cierre según tu ritmo |
+| `/fase` | Estado de una fase (con la ruta que el gate asignó a cada tópico) + fecha tentativa de cierre según tu ritmo |
 | `/config` | Ajustar el tutor (commands, roadmap, reglas) y publicar el cambio |
 | `/upgrade-agent <ruta>` | Actualizar el motor del tutor a una versión nueva de la skill: primero un plan en `docs/upgrades/`, aplica solo con tu `aprobado` |
 
@@ -100,6 +102,7 @@ Se actualiza el **motor** (commands, `CLAUDE.md`, plantillas, comportamientos) c
 
 - **Aquí se produce**: cada tópico exige trabajo tuyo; el tutor lo ejecuta o revisa — no acepta "ya lo hice".
 - La teoría no llega por el chat: cada tópico nuevo trae su `leccion.md` (contenido + preguntas). La lees en tu editor y respondes las preguntas en el chat.
+- Al entrar a una fase nueva el tutor te reta antes de enseñarte: lo que resuelvas se salta, lo que falles se enseña completo. El capstone de la fase no se salta nunca.
 - `dominado` solo se gana en una sesión **posterior**, superando recuperación activa sin ayuda.
 - `state/progress.json` lo escribe únicamente el tutor, en `/end-sesion`.
 - Si pides la solución completa, el tópico no avanza esa sesión: te espera una variante del ejercicio.
